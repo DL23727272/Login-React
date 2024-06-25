@@ -1,8 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import React, { useState } from 'react';
 import axios from "axios";
+import Swal from 'sweetalert2';
 
-function Signup() {
+    function Signup() {
+        
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -15,13 +17,29 @@ function Signup() {
                 email, password
             });
 
-            if (response.status === 409) {
-                alert("User already exists"); // Handle conflict response
-            } else if (response.data === "notExist") {
-                navigate("/home", { state: { id: email } });
+            if (response.status === 201) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'User created successfully',
+                    text: response.data,
+                }).then(() => {
+                    navigate("/home", { state: { id: email } });
+                });
             }
         } catch (error) {
-            alert("Error signing up: " + error.message);
+            if (error.response && error.response.status === 409) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'User already exists',
+                    text: error.response.data,
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error signing up',
+                    text: error.message,
+                });
+            }
             console.error(error);
         }
     }
@@ -54,13 +72,19 @@ function Signup() {
                                         id="password"
                                         required />
                                 </div>
+                                <div className="text-center mt-3 my-4">
+                                    <button type="submit" className="btn btn-primary btn-block mt-3">
+                                        Signup
+                                    </button>
 
-                                <button type="submit" className="btn btn-primary btn-block mt-3">Signup</button>
-
-                                <div className="text-center mt-3">
                                     <p>Or</p>
-                                    <Link to="/">Login Page</Link>
+                                    <Link to="/">
+                                        <button className="btn btn-primary" >
+                                            Login Page
+                                        </button>
+                                    </Link>
                                 </div>
+
                             </form>
                         </div>
                     </div>

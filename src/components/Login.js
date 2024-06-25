@@ -1,8 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
 import React, { useState } from 'react';
 import axios from "axios";
+import Swal from 'sweetalert2';
 
-function Login() {
+    function Login() {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -16,12 +17,26 @@ function Login() {
             });
 
             if (response.data === "exist") {
-                navigate("/home", { state: { id: email } }); 
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Login successful',
+                    text: 'Welcome back!',
+                }).then(() => {
+                    navigate("/home", { state: { id: email } });
+                });
             } else if (response.data === "notExist") {
-                alert("User has not signed up");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'User not found',
+                    text: 'User has not signed up',
+                });
             }
         } catch (error) {
-            alert("Wrong details or server error");
+            Swal.fire({
+                icon: 'error',
+                title: 'Error logging in',
+                text: 'Wrong details or server error',
+            });
             console.error(error);
         }
     }
@@ -54,10 +69,13 @@ function Login() {
                                         required 
                                     />
                                 </div>
-                                <button type="submit" className="btn btn-primary btn-block mt-3">Login</button>
-                                <div className="text-center mt-3">
+                                <div className="text-center mt-3 my-4">
+                                    <button type="submit" className="btn btn-primary btn-block mt-3">
+                                        Login
+                                    </button>
+                               
                                     <p>Or</p>
-                                    <Link to="/signup">Signup Page</Link>
+                                    <Link to="/signup"><button className="btn btn-primary" >Signup Page</button></Link>
                                 </div>
                             </form>
                         </div>
